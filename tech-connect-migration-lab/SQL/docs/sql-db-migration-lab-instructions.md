@@ -90,9 +90,10 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
     ![CMD_IPConfig](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/sqldbimages/Img_CMD_IPConfig.png?raw=true)
 
+    # Do we need this username and password?
 
 10. Fill in the connection details as appears below and Click on the **Connect** button
-
+    
     Server: Source Server IP (copied from previous step)
     
     Authentication Type: SQL Login
