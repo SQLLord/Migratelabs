@@ -48,37 +48,37 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
 2. Click on Search Icon from Taskbar after connecting to the source server and type “**Windows PowerShell ISE**” as appears below:
 
-![PowerShell_Open](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open.png?raw=true)
+   ![Powershell_Open](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open.png?raw=true)
 
 3. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
 
     ![PowerShell_Open_File](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
 
-4. Copy the file path and click **Open**: +++C:\SQLQueries\RestoreDBViaPowershell.ps1+++
+5. Copy the file path and click **Open**: +++C:\SQLQueries\RestoreDBViaPowershell.ps1+++
 
    **Run script using the Green Play button and wait for completion**  
 
     ![PowerShell_Open_File_Restore](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File_Restore.png?raw=true)
 
-5. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
+6. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
 
     ![PowerShell_Open_File](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
 
-6. Copy the file path and click **Open**: +++C:\SQLQueries\OpenFireWallPortonWindows.ps1+++
+7. Copy the file path and click **Open**: +++C:\SQLQueries\OpenFireWallPortonWindows.ps1+++
 
    
     ![PowerShell_Open_File_OpenFireWallPortonWindows](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows.png?raw=true)
 
-7. Click on **Run Script** and wait for the script completion:
+8. Click on **Run Script** and wait for the script completion:
 
     ![PowerShell_Open_File_OpenFireWallPortonWindows_Execute](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows_Execution.png?raw=true)
 
-8. Click on the Windows/Start button after connecting to the source server and type “**Azure Data Studio**” as appears below:
+9. Click on the Windows/Start button after connecting to the source server and type “**Azure Data Studio**” as appears below:
 
     ![AV_Source_ADS](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img1_AV_Source_ADS.png?raw=true)
 
 
-9. Click on the **Connections** and then click on the **New Connection** as appears below:
+10. Click on the **Connections** and then click on the **New Connection** as appears below:
 
     ![AV_Source_ADS_NewConnection](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img2_AV_Source_ADS_NewConnection.png?raw=true)
 
@@ -92,7 +92,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
     # Do we need this username and password?
 
-10. Fill in the connection details as appears below and Click on the **Connect** button
+11. Fill in the connection details as appears below and Click on the **Connect** button
     
     Server: Source Server IP (copied from previous step)
     
@@ -107,7 +107,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
  
  
-11. Click on the **Databases** after connecting to the source SQL server and then click on the **AdventureWorks2019_xxx**
+12. Click on the **Databases** after connecting to the source SQL server and then click on the **AdventureWorks2019_xxx**
 
     ![AV_Source_ADS_NewConnection_Details_DB_Tables](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img4_AV_Source_ADS_NewConnection_Details_DB_Tables.png?raw=true)
     
