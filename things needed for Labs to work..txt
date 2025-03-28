@@ -10,9 +10,9 @@ dism /online /enable-feature /featurename:FailoverCluster-Core-WOW64
 
 ---------------------------------------------------------------------------------
 Script to create a single node failover cluster instance
-Test-Cluster –Node server1.domain.local
+Test-Cluster 
 
-New-Cluster –Name server1 –Node server1.domain.local –StaticAddress xxx.xxx.xxx.xxx -NoStorage
+New-Cluster –Name sqlclstr -administrativeaccesspoint None -Verbose -Force
 
  
 
