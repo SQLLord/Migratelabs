@@ -1,0 +1,1 @@
+New-Cluster –Name sqlclstr -administrativeaccesspoint None -Verbose -Force
