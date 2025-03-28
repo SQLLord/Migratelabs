@@ -1,0 +1,49 @@
+// This template creates a resource group in Azure.
+
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.20.4.51522",
+      "templateHash": "7831916033916286802"
+    }
+  },
+  "parameters": {
+    "rgName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the resource group to create."
+      }
+    },
+    "rgLocation": {
+      "type": "string",
+        "defaultValue": "Central US",
+        "allowedValues": [
+          "East US",
+          "West US",
+          "Central US",
+          "North Central US",
+          "South Central US",
+          "East US 2",
+          "West US 2",
+          "West Central US"    
+        ],
+        "metadata": {
+          "description": "Location for the resource group"
+        }
+      }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/resourceGroups",
+      "apiVersion": "2022-09-01",
+      "name": "[parameters('rgName')]",
+      "location": "[parameters('rgLocation')]",
+       "properties": {
+        
+       }
+    }
+  ]
+}

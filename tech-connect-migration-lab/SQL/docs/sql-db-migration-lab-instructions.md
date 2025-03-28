@@ -1,4 +1,4 @@
-# Executive Summary
+# Migrate On-Prem Database to Azure SQL DB
 
 ## Objective
 
@@ -8,9 +8,8 @@ This document has been prepared to list the procedure/steps/instructions that ar
 
 This was devised to list the procedure/steps/instructions to migrate the (AdventureWorks2019_xxx) database running on Azure VM **to Azure SQL DB** using ADS and DMS.
 
-Note that this lab assumes a SQL DB instance is already pre-deployed for you.
+**Note that this lab assumes a SQL DB instance is already pre-deployed for you.**
 
-===
 
 # Pre-Requisites
 

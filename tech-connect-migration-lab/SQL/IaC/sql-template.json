@@ -7,13 +7,13 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2024-01-01",
-            "name": "TechConnectWin2k19sql19-nsg",
+            "name": "SQLLabsDemoWin2k19SQL2k19-nsg",
             "location": "[resourceGroup().location]",
             "properties": {
                 "securityRules": [
                     {
                         "name": "RDP",
-                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', 'TechConnectWin2k19sql19-nsg', 'RDP')]",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', 'SQLLabsDemoWin2k19SQL2k19-nsg', 'RDP')]",
                         "type": "Microsoft.Network/networkSecurityGroups/securityRules",
                         "properties": {
                             "protocol": "TCP",
@@ -36,14 +36,29 @@
         {
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2024-01-01",
-            "name": "TechConnectWin2k19sql19-ip",
+            "name": "SQLLabsDemoWin2k19SQL2k19-ip",
             "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard",
                 "tier": "Regional"
             },
             "properties": {
-                "ipAddress": "13.93.207.189",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+            {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-01-01",
+            "name": "SQLLabsDemoBastion-ip",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
                 "publicIPAddressVersion": "IPv4",
                 "publicIPAllocationMethod": "Static",
                 "idleTimeoutInMinutes": 4,
@@ -53,7 +68,7 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2024-01-01",
-            "name": "TechConnectWin2k19sql19-vnet",
+            "name": "SQLLabsDemoWin2k19SQL2k19-vnet",
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
@@ -64,7 +79,7 @@
                 "subnets": [
                     {
                         "name": "default",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'TechConnectWin2k19sql19-vnet', 'default')]",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'default')]",
                         "properties": {
                             "addressPrefix": "10.2.0.0/24",
                             "delegations": [],
@@ -75,7 +90,7 @@
                     },
                     {
                         "name": "AzureBastionSubnet",
-                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'TechConnectWin2k19sql19-vnet', 'AzureBastionSubnet')]",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'AzureBastionSubnet')]",
                         "properties": {
                             "addressPrefix": "10.2.1.0/26",
                             "delegations": [],
@@ -92,10 +107,10 @@
         {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2024-07-01",
-            "name": "TechConnectWin2k19sql19",
+            "name": "SQLLabsDemoWin2k19SQL2k19",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', 'techconnectwin2k19sql19133')]"
+                "[resourceId('Microsoft.Network/networkInterfaces', 'SQLLabsDemoWin2k19SQL2k19133')]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -113,7 +128,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "name": "TechConnectWin2k19sql19_OsDisk_1",
+                        "name": "SQLLabsDemoWin2k19SQL2k19_OsDisk_1",
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
                         "managedDisk": {
@@ -125,7 +140,7 @@
                     "dataDisks": [
     {
         "lun": 0,
-        "name": "TechConnectWin2k19sql19_DataDisk_0",
+        "name": "SQLLabsDemoWin2k19SQL2k19_DataDisk_0",
         "createOption": "Empty",
         "caching": "ReadOnly",
         "writeAcceleratorEnabled": false,
@@ -138,7 +153,7 @@
     },
     {
         "lun": 1,
-        "name": "TechConnectWin2k19sql19_DataDisk_1",
+        "name": "SQLLabsDemoWin2k19SQL2k19_DataDisk_1",
         "createOption": "Empty",
         "caching": "None",
         "writeAcceleratorEnabled": false,
@@ -178,7 +193,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'techconnectwin2k19sql19133')]",
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'SQLLabsDemoWin2k19SQL2k19133')]",
                             "properties": {
                                 "deleteOption": "Delete"
                             }
@@ -191,9 +206,9 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups/securityRules",
             "apiVersion": "2024-01-01",
-            "name": "TechConnectWin2k19sql19-nsg/RDP",
+            "name": "SQLLabsDemoWin2k19SQL2k19-nsg/RDP",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', 'TechConnectWin2k19sql19-nsg')]"
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'SQLLabsDemoWin2k19SQL2k19-nsg')]"
             ],
             "properties": {
                 "protocol": "TCP",
@@ -213,9 +228,9 @@
         {
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2024-01-01",
-            "name": "TechConnectWin2k19sql19-vnet/default",
+            "name": "SQLLabsDemoWin2k19SQL2k19-vnet/default",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', 'TechConnectWin2k19sql19-vnet')]"
+                "[resourceId('Microsoft.Network/virtualNetworks', 'SQLLabsDemoWin2k19SQL2k19-vnet')]"
             ],
             "properties": {
                 "addressPrefix": "10.2.0.0/24",
@@ -224,16 +239,39 @@
                 "privateLinkServiceNetworkPolicies": "Enabled"
             }
         },
+            {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2024-01-01",
+            "name": "SQLLabsDemoWin2k19SQL2k19-vnet/AzureBastionSubnet",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'SQLLabsDemoWin2k19SQL2k19-vnet')]"
+            ],
+            "properties": {
+                "addressPrefix": "10.2.1.0/26",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
         {
             "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
             "apiVersion": "2023-10-01",
-            "name": "TechConnectWin2k19sql19",
+            "name": "SQLLabsDemoWin2k19SQL2k19",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', 'TechConnectWin2k19sql19')]"
+                "[resourceId('Microsoft.Compute/virtualMachines', 'SQLLabsDemoWin2k19SQL2k19')]",
+                "[resourceId('Microsoft.Network/networkInterfaces', 'SQLLabsDemoWin2k19SQL2k19133')]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoWin2k19SQL2k19-ip')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'default')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'SQLLabsDemoWin2k19SQL2k19-nsg')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'AzureBastionSubnet')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'SQLLabsDemoWin2k19SQL2k19-vnet')]",
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoBastion-ip')]",
+                "[resourceId('Microsoft.Network/bastionHosts', 'sql-lab-vnet-bastion')]"
+
             ],
             "properties": {
-                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', 'TechConnectWin2k19sql19')]",
+                "virtualMachineResourceId": "[resourceId('Microsoft.Compute/virtualMachines', 'SQLLabsDemoWin2k19SQL2k19')]",
                 "sqlImageOffer": "SQL2019-WS2019",
                 "sqlServerLicenseType": "AHUB",
                 "sqlManagement": "Full",
@@ -245,31 +283,31 @@
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2024-01-01",
-            "name": "techconnectwin2k19sql19133",
+            "name": "SQLLabsDemoWin2k19SQL2k19133",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', 'TechConnectWin2k19sql19-ip')]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'TechConnectWin2k19sql19-vnet', 'default')]",
-                "[resourceId('Microsoft.Network/networkSecurityGroups', 'TechConnectWin2k19sql19-nsg')]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoWin2k19SQL2k19-ip')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'default')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'SQLLabsDemoWin2k19SQL2k19-nsg')]"
             ],
             "kind": "Regular",
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
-                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', 'techconnectwin2k19sql19133'), '/ipConfigurations/ipconfig1')]",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', 'SQLLabsDemoWin2k19SQL2k19133'), '/ipConfigurations/ipconfig1')]",
                         "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
                         "properties": {
                             "privateIPAddress": "10.2.0.4",
                             "privateIPAllocationMethod": "Dynamic",
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'TechConnectWin2k19sql19-ip')]",
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoWin2k19SQL2k19-ip')]",
                                 "properties": {
                                     "deleteOption": "Delete"
                                 }
                             },
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'TechConnectWin2k19sql19-vnet', 'default')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'default')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -283,11 +321,53 @@
                 "enableIPForwarding": false,
                 "disableTcpStateTracking": false,
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'TechConnectWin2k19sql19-nsg')]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'SQLLabsDemoWin2k19SQL2k19-nsg')]"
                 },
                 "nicType": "Standard",
                 "auxiliaryMode": "None",
                 "auxiliarySku": "None"
+            }
+        },  
+            {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2024-05-01",
+            "name": "sql-lab-vnet-bastion",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoBastion-ip')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'default')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', 'SQLLabsDemoWin2k19SQL2k19-nsg')]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'AzureBastionSubnet')]",
+                "[resourceId('Microsoft.Network/virtualNetworks', 'SQLLabsDemoWin2k19SQL2k19-vnet')]"
+            ],
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "dnsName": "bst-33313092-fca1-40ea-a841-76dd5792e5a3.bastion.azure.com",
+                "scaleUnits": 2,
+                "enableTunneling": false,
+                "enableIpConnect": false,
+                "disableCopyPaste": false,
+                "enableShareableLink": false,
+                "enableKerberos": false,
+                "enableSessionRecording": false,
+                "enablePrivateOnlyBastion": false,
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "id": "[concat(resourceId('Microsoft.Network/bastionHosts','SQLLabsDemoWin2k19SQL2k19-vnet') , '/bastionHostIpConfigurations/IpConf')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'SQLLabsDemoBastion-ip')]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'SQLLabsDemoWin2k19SQL2k19-vnet', 'AzureBastionSubnet')]"
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]
