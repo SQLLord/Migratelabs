@@ -17,11 +17,11 @@ Note that this lab assumes a SQL DB instance is already pre-deployed for you.
 **Log In to the machine**
 When you launch the lab, you will be prompted to log in to a Windows machine.
 
- ![](https://github.com/Azure/tech-connect-migration-lab/blob/main/MySQL/docs/media/skillable_img1.png?raw=true)
+ ![](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/MySQL/docs/media/skillable_img1.png?raw=true)
 
- The Windows user and password information will be displayed at the bottom of the "Resources" tab. Whenever you see a ![](https://github.com/Azure/tech-connect-migration-lab/blob/main/MySQL/docs/media/skillable_img5.png?raw=true) preceding a text, you can click on it and the text will be typed for you in the text box or application that is active in the UI of the lab screen. 
+ The Windows user and password information will be displayed at the bottom of the "Resources" tab. Whenever you see a ![](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/MySQL/docs/media/skillable_img5.png?raw=true) preceding a text, you can click on it and the text will be typed for you in the text box or application that is active in the UI of the lab screen. 
  
-  ![](https://github.com/Azure/tech-connect-migration-lab/blob/main/MySQL/docs/media/skillable_img2.png?raw=true)
+  ![](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/MySQL/docs/media/skillable_img2.png?raw=true)
 
 
 ## Pre-migration tasks and validation
@@ -36,11 +36,11 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
 1. Click on Search Icon from Taskbar and type "Remote Desktop Connection" as it appears below
 
-    ![Remote_Desktop_Connection](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_Remote_Desktop_Connection.png?raw=true)
+    ![Remote_Desktop_Connection](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_Remote_Desktop_Connection.png?raw=true)
 
     It will open Remote Desktop Connection as shown below, provide the computer name, user name and password to connect
 
-    ![Remote_Desktop_ConnectionOpen](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_Remote_Desktop_Connection_Open.png?raw=true)
+    ![Remote_Desktop_ConnectionOpen](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_Remote_Desktop_Connection_Open.png?raw=true)
 
     **Please contact lab moderator for the IP address, username and password
     Connect to your machine using user name/password provided by lab moderator.
@@ -48,37 +48,37 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
 2. Click on Search Icon from Taskbar after connecting to the source server and type “**Windows PowerShell ISE**” as appears below:
 
-   ![Powershell_Open](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open.png?raw=true)
+    ![PowerShell_Open](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_Open_options.png?raw=true)
 
 3. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
 
-    ![PowerShell_Open_File](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
+    ![PowerShell_Open_File](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
 
-5. Copy the file path and click **Open**: +++C:\SQLQueries\RestoreDBViaPowershell.ps1+++
+4. Copy the file path and click **Open**: +++C:\SQLQueries\RestoreDBViaPowershell.ps1+++
 
    **Run script using the Green Play button and wait for completion**  
 
-    ![PowerShell_Open_File_Restore](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File_Restore.png?raw=true)
+    ![PowerShell_Open_File_Restore](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_Open_File_Restore.png?raw=true)
 
-6. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
+5. Click on **File** Menu from PowerShell ISE window and select **Open** file as appears below:
 
-    ![PowerShell_Open_File](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
+    ![PowerShell_Open_File](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_Open_File.png?raw=true)
 
-7. Copy the file path and click **Open**: +++C:\SQLQueries\OpenFireWallPortonWindows.ps1+++
+6. Copy the file path and click **Open**: +++C:\SQLQueries\OpenFireWallPortonWindows.ps1+++
 
    
-    ![PowerShell_Open_File_OpenFireWallPortonWindows](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows.png?raw=true)
+    ![PowerShell_Open_File_OpenFireWallPortonWindows](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows.png?raw=true)
 
-8. Click on **Run Script** and wait for the script completion:
+7. Click on **Run Script** and wait for the script completion:
 
-    ![PowerShell_Open_File_OpenFireWallPortonWindows_Execute](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows_Execution.png?raw=true)
+    ![PowerShell_Open_File_OpenFireWallPortonWindows_Execute](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img_PowerShell_OpenFireWallPortonWindows_Execution.png?raw=true)
 
-9. Click on the Windows/Start button after connecting to the source server and type “**Azure Data Studio**” as appears below:
+8. Click on the Windows/Start button after connecting to the source server and type “**Azure Data Studio**” as appears below:
 
     ![AV_Source_ADS](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img1_AV_Source_ADS.png?raw=true)
 
 
-10. Click on the **Connections** and then click on the **New Connection** as appears below:
+9. Click on the **Connections** and then click on the **New Connection** as appears below:
 
     ![AV_Source_ADS_NewConnection](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img2_AV_Source_ADS_NewConnection.png?raw=true)
 
@@ -92,7 +92,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
     # Do we need this username and password?
 
-11. Fill in the connection details as appears below and Click on the **Connect** button
+10. Fill in the connection details as appears below and Click on the **Connect** button
     
     Server: Source Server IP (copied from previous step)
     
@@ -107,7 +107,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
  
  
-12. Click on the **Databases** after connecting to the source SQL server and then click on the **AdventureWorks2019_xxx**
+11. Click on the **Databases** after connecting to the source SQL server and then click on the **AdventureWorks2019_xxx**
 
     ![AV_Source_ADS_NewConnection_Details_DB_Tables](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img4_AV_Source_ADS_NewConnection_Details_DB_Tables.png?raw=true)
     
@@ -185,7 +185,7 @@ If you can see any database name under the **system databases** as appeared abov
 
 16. Click on Search Icon from Taskbar after connecting to the source server and type “**SQL Server Management Studio**” as appears below:
 
-    ![AccessValidation_SSMS](https://github.com/Azure/tech-connect-migration-lab/blob/main/SQL/docs/Images/Img1_AccessValidation_SSMS.png?raw=true)
+    ![AccessValidation_SSMS](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/Images/Img1_AccessValidation_SSMS.png?raw=true)
 
 17. Fill in the connection details as appears below and Click on the **Connect** button
 
