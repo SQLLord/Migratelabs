@@ -14,7 +14,7 @@ Write-Host "File downloaded successfully to $destinationPath"
 #restore database
 
 # Define the SQL Server instance and database
-$serverInstance = "techconnectwin2"
+$serverInstance = "."
 $database = "master"
 
 # Define the PowerShell variable containing the SQL command
