@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "privateEndpoints_sqllabsserver_pe_name": {
+            "defaultValue": "sqllabsserver-pe",
+            "type": "String"
+        },
+        "servers_sqllabsvbd_externalid": {
+            "defaultValue": "/subscriptions/c74394b4-ca2c-4b21-b740-46f54c9ee77a/resourceGroups/SQLLabs/providers/Microsoft.Sql/servers/sqllabsvbd",
+            "type": "String"
+        },
+        "virtualNetworks_Lab_vnet_217c5_externalid": {
+            "defaultValue": "/subscriptions/c74394b4-ca2c-4b21-b740-46f54c9ee77a/resourceGroups/SQLLabs/providers/Microsoft.Network/virtualNetworks/Lab-vnet_217c5",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2024-05-01",
+            "name": "[parameters('privateEndpoints_sqllabsserver_pe_name')]",
+            "location": "centralus",
+            "properties": {
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpoints_sqllabsserver_pe_name')]",
+                        "id": "[concat(resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpoints_sqllabsserver_pe_name')), concat('/privateLinkServiceConnections/', parameters('privateEndpoints_sqllabsserver_pe_name')))]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('servers_sqllabsvbd_externalid')]",
+                            "groupIds": [
+                                "SqlServer"
+                            ],
+                            "privateLinkServiceConnectionState": {
+                                "status": "Approved",
+                                "description": "Auto-approved",
+                                "actionsRequired": "None"
+                            }
+                        }
+                    }
+                ],
+                "manualPrivateLinkServiceConnections": [],
+                "subnet": {
+                    "id": "[concat(parameters('virtualNetworks_Lab_vnet_217c5_externalid'), '/subnets/Default')]"
+                },
+                "ipConfigurations": [],
+                "customDnsConfigs": [
+                    {
+                        "fqdn": "sqllabsvbd.database.windows.net",
+                        "ipAddresses": [
+                            "10.2.0.5"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}

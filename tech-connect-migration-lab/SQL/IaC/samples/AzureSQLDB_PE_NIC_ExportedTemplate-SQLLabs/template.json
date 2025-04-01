@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkInterfaces_sqllabsserver_pe_nic_d836daa7_e33a_4c04_8239_0e1e98b1a1fb_name": {
+            "defaultValue": "sqllabsserver-pe.nic.d836daa7-e33a-4c04-8239-0e1e98b1a1fb",
+            "type": "String"
+        },
+        "virtualNetworks_Lab_vnet_217c5_externalid": {
+            "defaultValue": "/subscriptions/c74394b4-ca2c-4b21-b740-46f54c9ee77a/resourceGroups/SQLLabs/providers/Microsoft.Network/virtualNetworks/Lab-vnet_217c5",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2024-05-01",
+            "name": "[parameters('networkInterfaces_sqllabsserver_pe_nic_d836daa7_e33a_4c04_8239_0e1e98b1a1fb_name')]",
+            "location": "centralus",
+            "kind": "Regular",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "privateEndpointIpConfig.747777d7-afe4-4189-990b-d7fe4701a7cb",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_sqllabsserver_pe_nic_d836daa7_e33a_4c04_8239_0e1e98b1a1fb_name')), '/ipConfigurations/privateEndpointIpConfig.747777d7-afe4-4189-990b-d7fe4701a7cb')]",
+                        "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
+                        "properties": {
+                            "privateIPAddress": "10.2.0.5",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[concat(parameters('virtualNetworks_Lab_vnet_217c5_externalid'), '/subnets/Default')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "disableTcpStateTracking": false,
+                "nicType": "Standard",
+                "auxiliaryMode": "None",
+                "auxiliarySku": "None"
+            }
+        }
+    ]
+}

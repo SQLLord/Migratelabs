@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkInterfaces_sqllabsserver_pe_nic_d836daa7_e33a_4c04_8239_0e1e98b1a1fb_name": {
+            "value": null
+        },
+        "virtualNetworks_Lab_vnet_217c5_externalid": {
+            "value": null
+        }
+    }
+}

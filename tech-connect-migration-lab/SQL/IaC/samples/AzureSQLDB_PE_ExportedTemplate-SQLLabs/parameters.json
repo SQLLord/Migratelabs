@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "privateEndpoints_sqllabsserver_pe_name": {
+            "value": null
+        },
+        "servers_sqllabsvbd_externalid": {
+            "value": null
+        },
+        "virtualNetworks_Lab_vnet_217c5_externalid": {
+            "value": null
+        }
+    }
+}
