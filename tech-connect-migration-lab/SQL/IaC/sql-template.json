@@ -10,6 +10,7 @@
         "ASQLDBSRVRAdminPassword": "b9yVh](w-x@T3Y$)>}:s!",
         "ASQLServerName" : "[concat('sqllabsAsqlsrv', variables('shortUniqueName'))]",
         "ASQLServerID" : "[resourceId('Microsoft.Sql/servers', variables('ASQLServerName'))]",
+        "ASQLDBName":"[concat(variables('ASQLServerName'), '/labtest02')]",
         "MainNSG": "[concat('LabVnetNSGMain-nsg_', variables('shortUniqueName'))]",
         "MainNSGID": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('MainNSG'))]",
         "MainVNet": "[concat('Lab-vnet_', variables('shortUniqueName'))]",
@@ -18,8 +19,6 @@
         "MainVMDataDisk": "[concat('sqllabsdisk', variables('shortUniqueName'))]",
         "MainVMDataDisk2": "[concat('sqllabsdisk2', variables('shortUniqueName'))]",
         "MainVMOSDisk" : "[concat('sqllabsosdisk', variables('shortUniqueName'))]",
-        "VMPublicIP": "[concat('SQLLabsWin2k19SQL2k19-ip_', variables('shortUniqueName'))]",
-        "VMPublicIPID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VMPublicIP'))]",
         "BastionIP": "[concat('SQLLabsBastion-ip_', variables('shortUniqueName'))]",
         "BastionIPID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('BastionIP'))]",
         "BastionHostsName": "[concat('sql-lab-vnet-bastion_', variables('shortUniqueName'))]",
@@ -65,22 +64,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2024-01-01",
-            "name": "[variables('VMPublicIP')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard",
-                "tier": "Regional"
-            },
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Static",
-                "idleTimeoutInMinutes": 4,
-                "ipTags": []
             }
         },
             {
@@ -295,7 +278,6 @@
             "dependsOn": [
                 "[variables('MainVMID')]",
                 "[variables('VMNICID')]",
-                "[variables('VMPublicIPID')]",
                 "[variables('DefaultSubnetID')]",
                 "[variables('MainNSGID')]",
                 "[variables('MainVNetID')]"
@@ -316,7 +298,6 @@
             "name": "[variables('VMNICName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[variables('VMPublicIP')]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'default')]",
                 "[variables('MainNSGID')]"
             ],
@@ -330,12 +311,6 @@
                         "properties": {
                             "privateIPAddress": "10.2.0.4",
                             "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('VMPublicIP'))]",
-                                "properties": {
-                                    "deleteOption": "Delete"
-                                }
-                            },
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'default')]"
                             },
@@ -409,7 +384,38 @@
             "properties": {
                 "administratorLogin": "[variables('ASQLDBSRVRAdminUsername')]",
                 "administratorLoginType": "sql",
-                "administratorLoginPassword": "[variables('ASQLDBSRVRAdminPassword')]"
+                "administratorLoginPassword": "[variables('ASQLDBSRVRAdminPassword')]",
+                "minimalTlsVersion": "1.2",
+                "publicNetworkAccess": "Disabled",
+                "restrictOutboundNetworkAccess": "Disabled"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2024-05-01-preview",
+            "name": "[variables('ASQLDBName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('ASQLServerID')]"
+            ],
+            "sku": {
+                "name": "GP_S_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 1
+            },
+            "kind": "v12.0,user,vcore,serverless",
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": 34359738368,
+                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                "zoneRedundant": false,
+                "readScale": "Disabled",
+                "autoPauseDelay": 60,
+                "requestedBackupStorageRedundancy": "Local",
+                "minCapacity": 0.5,
+                "isLedgerOn": false,
+                "availabilityZone": "NoPreference"
             }
         },
         {
