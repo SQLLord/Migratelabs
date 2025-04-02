@@ -99,7 +99,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
 
     User name: +++dbadmin+++
     
-    Password: +++b"9yVh](w-x@T3Y$)>}:s!+++
+    Password: +++b9yVh](w-x@T3Y$)>}:s!+++
     ![AV_Source_ADS_NewConnection_Details](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img3_AV_Source_ADS_NewConnection_Details.png?raw=true)
 
     **If connection error appears click on Enable Trust Server certificate** button
@@ -162,7 +162,7 @@ When you launch the lab, you will be prompted to log in to a Windows machine.
     
     Login name: +++dbadmin+++
 
-    Password: +++b"9yVh](w-x@T3Y$)>}:s!+++
+    Password: +++b9yVh](w-x@T3Y$)>}:s!+++
 
     ![AV_Target_ADS_NewConnection_Details](https://github.com/SQLLord/Migratelabs/blob/main/tech-connect-migration-lab/SQL/docs/sqldbimages/Img12_AV_Target_ADS_NewConnection_Details.png?raw=true)
     

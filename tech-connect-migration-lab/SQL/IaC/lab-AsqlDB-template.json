@@ -1,0 +1,498 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "uniqueName": "[guid(resourceGroup().id, deployment().name)]",
+        "shortUniqueName": "[substring(variables('uniquename'), 1, 5)]",
+        "LongUniqueName": "[substring(variables('uniquename'), 1, 11)]",
+        "ASQLDBSRVRAdminUsername": "dbadmin",
+        "ASQLDBSRVRAdminPassword": "b9yVh](w-x@T3Y$)>}:s!",
+        "ASQLServerName" : "[concat('sqllabsAsqlsrv', variables('shortUniqueName'))]",
+        "ASQLServerID" : "[resourceId('Microsoft.Sql/servers', variables('ASQLServerName'))]",
+        "ASQLDBName":"[concat(variables('ASQLServerName'), '/labtest02')]",
+        "MainNSG": "[concat('LabVnetNSGMain-nsg_', variables('shortUniqueName'))]",
+        "MainNSGID": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('MainNSG'))]",
+        "MainVNet": "[concat('Lab-vnet_', variables('shortUniqueName'))]",
+        "MainVNetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('MainVNet'))]",
+        "MainVMID": "[resourceId('Microsoft.Compute/virtualMachines', variables('ComputerName'))]",
+        "MainVMDataDisk": "[concat('sqllabsdisk', variables('shortUniqueName'))]",
+        "MainVMDataDisk2": "[concat('sqllabsdisk2', variables('shortUniqueName'))]",
+        "MainVMOSDisk" : "[concat('sqllabsosdisk', variables('shortUniqueName'))]",
+        "BastionIP": "[concat('SQLLabsBastion-ip_', variables('shortUniqueName'))]",
+        "BastionIPID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('BastionIP'))]",
+        "BastionHostsName": "[concat('sql-lab-vnet-bastion_', variables('shortUniqueName'))]",
+        "DefaultSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'Default')]",
+        "BastionSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'AzureBastionSubnet')]",
+        "SQLVMID": "[resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', variables('ComputerName'))]",
+        "VMNICName": "[concat('SQLLabsWin2k19SQL2k19NIC_', variables('shortUniqueName'))]",
+        "VMNICID": "[resourceId('Microsoft.Network/networkInterfaces', variables('VMNICName'))]",
+        "ComputerName": "[concat('SQLLabs', variables('shortUniqueName'))]",
+        "PEname": "[concat('ASQLDBPENIC',variables('LongUniqueName'))]",
+        "PrivateEndpointID": "[resourceId('Microsoft.Network/privateEndpoints', variables('PEname'))]",
+        "PrivateDnsZoneName": "privatelink.database.windows.net",
+        "PrivateDnsZoneID": "[resourceId('Microsoft.Network/privateDnsZones', variables('PrivateDnsZoneName'))]",
+        "PrivateDnsZoneLinkName": "[concat(variables('PrivateDnsZoneName'), '/', variables('MainVNet'), 'Link')]"
+
+
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2024-01-01",
+            "name": "[variables('MainNSG')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "RDP",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', variables('MainNSG'), 'RDP')]",
+                        "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+            {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2024-01-01",
+            "name": "[variables('BastionIP')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2024-01-01",
+            "name": "[variables('MainVNet')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.2.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "Default",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'default')]",
+                        "properties": {
+                            "addressPrefix": "10.2.0.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    },
+                    {
+                        "name": "AzureBastionSubnet",
+                        "id":  "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'AzureBastionSubnet')]",
+                        "properties": {
+                            "addressPrefix": "10.2.1.0/26",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2024-07-01",
+            "name": "[variables('ComputerName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('VMNICID')]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_E8ads_v5"
+                },
+                "additionalCapabilities": {
+                    "hibernationEnabled": false
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "microsoftsqlserver",
+                        "offer": "sql2019-ws2019",
+                        "sku": "enterprise-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[variables('MainVMOSDisk')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS"
+                        },
+                        "deleteOption": "Delete",
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": [
+    {
+        "lun": 0,
+        "name": "[variables('MainVMDataDisk')]",
+        "createOption": "Empty",
+        "caching": "ReadOnly",
+        "writeAcceleratorEnabled": false,
+        "managedDisk": {
+            "storageAccountType": "Premium_LRS"
+        },
+        "deleteOption": "Detach",
+        "diskSizeGB": 32,
+        "toBeDetached": false
+    },
+    {
+        "lun": 1,
+        "name": "[variables('MainVMDataDisk2')]",
+        "createOption": "Empty",
+        "caching": "None",
+        "writeAcceleratorEnabled": false,
+        "managedDisk": {
+            "storageAccountType": "Premium_LRS"
+        },
+        "deleteOption": "Detach",
+        "diskSizeGB": 32,
+        "toBeDetached": false
+    }
+],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[variables('ComputerName')]",
+                    "adminUsername": "labuser",
+                    "adminPassword": "Pa$$w0rd",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true,
+                        "patchSettings": {
+                            "patchMode": "AutomaticByOS",
+                            "assessmentMode": "ImageDefault",
+                            "enableHotpatching": false
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true
+                },
+                "securityProfile": {
+                    "uefiSettings": {
+                        "secureBootEnabled": true,
+                        "vTpmEnabled": true
+                    },
+                    "securityType": "TrustedLaunch"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[variables('VMNICID')]",
+                            "properties": {
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                },
+                "licenseType": "Windows_Server"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(variables('MainNSG'),'/RDP')]",
+            "dependsOn": [
+                "[variables('MainNSGID')]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 300,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(variables('MainVNet'), '/default')]",
+            "dependsOn": [
+                "[variables('MainVNetID')]"
+            ],
+            "properties": {
+                "addressPrefix": "10.2.0.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+            {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(variables('MainVNet'),'/AzureBastionSubnet')]",
+            "dependsOn": [
+                "[variables('MainVNetID')]"
+            ],
+            "properties": {
+                "addressPrefix": "10.2.1.0/26",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.SqlVirtualMachine/sqlVirtualMachines",
+            "apiVersion": "2023-10-01",
+            "name": "[variables('ComputerName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('MainVMID')]",
+                "[variables('VMNICID')]",
+                "[variables('DefaultSubnetID')]",
+                "[variables('MainNSGID')]",
+                "[variables('MainVNetID')]"
+            ],
+            "properties": {
+                "virtualMachineResourceId": "[variables('MainVMID')]",
+                "sqlImageOffer": "SQL2019-WS2019",
+                "sqlServerLicenseType": "AHUB",
+                "sqlManagement": "Full",
+                "leastPrivilegeMode": "Enabled",
+                "sqlImageSku": "Enterprise",
+                "enableAutomaticUpgrade": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2024-01-01",
+            "name": "[variables('VMNICName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'default')]",
+                "[variables('MainNSGID')]"
+            ],
+            "kind": "Regular",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', variables('VMNICName')), '/ipConfigurations/ipconfig1')]",
+                        "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
+                        "properties": {
+                            "privateIPAddress": "10.2.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'default')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": true,
+                "enableIPForwarding": false,
+                "disableTcpStateTracking": false,
+                "networkSecurityGroup": {
+                    "id": "[variables('MainNSGID')]"
+                },
+                "nicType": "Standard",
+                "auxiliaryMode": "None",
+                "auxiliarySku": "None"
+            }
+        },  
+            {
+            "type": "Microsoft.Network/bastionHosts",
+            "apiVersion": "2024-05-01",
+            "name": "[variables('BastionHostsName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('BastionIPID')]",
+                "[variables('DefaultSubnetID')]",
+                "[variables('MainNSGID')]",
+                "[variables('BastionSubnetID')]",
+                "[variables('MainVNetID')]",
+                "[variables('SQLVMID')]",
+                "[variables('ASQLServerID')]"
+            ],
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "scaleUnits": 2,
+                "enableTunneling": false,
+                "enableIpConnect": false,
+                "disableCopyPaste": false,
+                "enableShareableLink": false,
+                "enableKerberos": false,
+                "enableSessionRecording": false,
+                "enablePrivateOnlyBastion": false,
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "id": "[concat(resourceId('Microsoft.Network/bastionHosts',variables('MainVNet')) , '/bastionHostIpConfigurations/IpConf')]",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[variables('BastionIPID')]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('MainVNet'), 'AzureBastionSubnet')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2022-05-01-preview",
+            "name": "[variables('ASQLServerName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[variables('ASQLDBSRVRAdminUsername')]",
+                "administratorLoginType": "sql",
+                "administratorLoginPassword": "[variables('ASQLDBSRVRAdminPassword')]",
+                "minimalTlsVersion": "1.2",
+                "publicNetworkAccess": "Disabled",
+                "restrictOutboundNetworkAccess": "Disabled"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2024-05-01-preview",
+            "name": "[variables('ASQLDBName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('ASQLServerID')]"
+            ],
+            "sku": {
+                "name": "GP_S_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 1
+            },
+            "kind": "v12.0,user,vcore,serverless",
+            "properties": {
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": 34359738368,
+                "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+                "zoneRedundant": false,
+                "readScale": "Disabled",
+                "autoPauseDelay": 60,
+                "requestedBackupStorageRedundancy": "Local",
+                "minCapacity": 0.5,
+                "isLedgerOn": false,
+                "availabilityZone": "NoPreference"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2024-05-01",
+            "name": "[variables('PEname')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('MainVNetID')]",
+                "[variables('DefaultSubnetID')]",
+                "[variables('ASQLServerID')]"
+            ],
+            "properties": {
+                "subnet": {
+                "id": "[variables('DefaultSubnetID')]"
+                },
+                "privateLinkServiceConnections": [
+                {
+                    "name": "sqlPrivateLink",
+                    "properties": {
+                    "privateLinkServiceId": "[variables('ASQLServerID')]",
+                    "groupIds": [
+                        "sqlServer"
+                    ],
+                    "requestMessage": "Please approve my connection.",
+                    "privateLinkServiceConnectionState": {
+                        "status": "Approved",
+                        "description": "Auto-approved via ARM template",
+                        "actionsRequired": "None"
+                    }
+                    }
+                }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2024-06-01",
+            "name": "[variables('PrivateDnsZoneName')]",
+            "location": "global",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2024-06-01",
+            "name": "[variables('PrivateDnsZoneLinkName')]",
+            "location": "global",
+            "properties": {
+                "virtualNetwork": {
+                "id": "[variables('MainVNetID')]"
+                },
+                "registrationEnabled": true
+            },
+            "dependsOn": [
+                "[variables('PrivateDnsZoneID')]",
+                "[variables('MainVNetID')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2024-05-01",
+            "name": "[concat(variables('PEname'), '/default')]",
+            "location": "global",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                {
+                    "name": "sqlPrivateDnsZoneConfig",
+                    "properties": {
+                    "privateDnsZoneId": "[variables('PrivateDnsZoneID')]"
+                    }
+                }
+                ]
+            },
+            "dependsOn": [
+                "[variables('PrivateEndpointID')]",
+                "[variables('PrivateDnsZoneID')]"                
+            ]
+        }
+    ]
+}
