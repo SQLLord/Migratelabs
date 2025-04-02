@@ -5,6 +5,11 @@
     "variables": {
         "uniqueName": "[guid(resourceGroup().id, deployment().name)]",
         "shortUniqueName": "[substring(variables('uniquename'), 1, 5)]",
+        "LongUniqueName": "[substring(variables('uniquename'), 1, 11)]",
+        "ASQLDBSRVRAdminUsername": "dbadmin",
+        "ASQLDBSRVRAdminPassword": "b9yVh](w-x@T3Y$)>}:s!",
+        "ASQLServerName" : "[concat('sqllabsAsqlsrv', variables('shortUniqueName'))]",
+        "ASQLServerID" : "[resourceId('Microsoft.Sql/servers', variables('ASQLServerName'))]",
         "MainNSG": "[concat('LabVnetNSGMain-nsg_', variables('shortUniqueName'))]",
         "MainNSGID": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('MainNSG'))]",
         "MainVNet": "[concat('Lab-vnet_', variables('shortUniqueName'))]",
@@ -23,7 +28,12 @@
         "SQLVMID": "[resourceId('Microsoft.SqlVirtualMachine/sqlVirtualMachines', variables('ComputerName'))]",
         "VMNICName": "[concat('SQLLabsWin2k19SQL2k19NIC_', variables('shortUniqueName'))]",
         "VMNICID": "[resourceId('Microsoft.Network/networkInterfaces', variables('VMNICName'))]",
-        "ComputerName": "[concat('SQLLabs', variables('shortUniqueName'))]"
+        "ComputerName": "[concat('SQLLabs', variables('shortUniqueName'))]",
+        "PEname": "[concat('ASQLDBPENIC',variables('LongUniqueName'))]",
+        "PrivateEndpointID": "[resourceId('Microsoft.Network/privateEndpoints', variables('PEname'))]",
+        "PrivateDnsZoneName": "privatelink.database.windows.net",
+        "PrivateDnsZoneID": "[resourceId('Microsoft.Network/privateDnsZones', variables('PrivateDnsZoneName'))]",
+        "PrivateDnsZoneLinkName": "[concat(variables('PrivateDnsZoneName'), '/', variables('MainVNet'), 'Link')]"
 
 
     },
@@ -359,7 +369,8 @@
                 "[variables('MainNSGID')]",
                 "[variables('BastionSubnetID')]",
                 "[variables('MainVNetID')]",
-                "[variables('SQLVMID')]"
+                "[variables('SQLVMID')]",
+                "[variables('ASQLServerID')]"
             ],
             "sku": {
                 "name": "Standard"
@@ -389,6 +400,93 @@
                     }
                 ]
             }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2022-05-01-preview",
+            "name": "[variables('ASQLServerName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[variables('ASQLDBSRVRAdminUsername')]",
+                "administratorLoginType": "sql",
+                "administratorLoginPassword": "[variables('ASQLDBSRVRAdminPassword')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2024-05-01",
+            "name": "[variables('PEname')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('MainVNetID')]",
+                "[variables('DefaultSubnetID')]",
+                "[variables('ASQLServerID')]"
+            ],
+            "properties": {
+                "subnet": {
+                "id": "[variables('DefaultSubnetID')]"
+                },
+                "privateLinkServiceConnections": [
+                {
+                    "name": "sqlPrivateLink",
+                    "properties": {
+                    "privateLinkServiceId": "[variables('ASQLServerID')]",
+                    "groupIds": [
+                        "sqlServer"
+                    ],
+                    "requestMessage": "Please approve my connection.",
+                    "privateLinkServiceConnectionState": {
+                        "status": "Approved",
+                        "description": "Auto-approved via ARM template",
+                        "actionsRequired": "None"
+                    }
+                    }
+                }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2024-06-01",
+            "name": "[variables('PrivateDnsZoneName')]",
+            "location": "global",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2024-06-01",
+            "name": "[variables('PrivateDnsZoneLinkName')]",
+            "location": "global",
+            "properties": {
+                "virtualNetwork": {
+                "id": "[variables('MainVNetID')]"
+                },
+                "registrationEnabled": true
+            },
+            "dependsOn": [
+                "[variables('PrivateDnsZoneID')]",
+                "[variables('MainVNetID')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2024-05-01",
+            "name": "[concat(variables('PEname'), '/default')]",
+            "location": "global",
+            "properties": {
+                "privateDnsZoneConfigs": [
+                {
+                    "name": "sqlPrivateDnsZoneConfig",
+                    "properties": {
+                    "privateDnsZoneId": "[variables('PrivateDnsZoneID')]"
+                    }
+                }
+                ]
+            },
+            "dependsOn": [
+                "[variables('PrivateEndpointID')]",
+                "[variables('PrivateDnsZoneID')]"                
+            ]
         }
     ]
 }
